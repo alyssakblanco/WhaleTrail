@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="WhaleTrail.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:WhaleTrail"
+    Shell.FlyoutBehavior="Disabled"
+    Title="WhaleTrail">
+
+    <TabBar>
+        <Tab Title="Trivia"
+             Icon="puzzle_piece_solid.svg">
+            <ShellContent ContentTemplate="{DataTemplate local:TriviaPage}" />
+        </Tab>
+        <Tab Title="My Trip"
+             Icon="location_dot_solid.svg">
+            <ShellContent ContentTemplate="{DataTemplate local:MainPage}" />
+        </Tab>
+        <Tab Title="Whales Info"
+             Icon="book_solid.svg">
+            <ShellContent ContentTemplate="{DataTemplate local:WhalesPage}" />
+        </Tab>
+    </TabBar>
+
+</Shell>
