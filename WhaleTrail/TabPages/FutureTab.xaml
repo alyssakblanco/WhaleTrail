@@ -1,18 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="WhaleTrail.TriviaPage">
+             x:Class="WhaleTrail.Pages.TabPages.FutureTab"
+             Shell.NavBarIsVisible="False">
 
-    <ScrollView>
-        <VerticalStackLayout
+    <VerticalStackLayout
             Padding="30,0"
             Spacing="25">
-            <Label
-                Text="Trivia"
+        <Label
+                Text="Future"
                 Style="{StaticResource Headline}"
                 SemanticProperties.HeadingLevel="Level1" />
-            <ContentView x:Name="contentContainer" />
-        </VerticalStackLayout>
-    </ScrollView>
+    </VerticalStackLayout>
 
 </ContentPage>

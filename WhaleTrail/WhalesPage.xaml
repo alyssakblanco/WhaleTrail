@@ -11,6 +11,7 @@
                 Text="Whales"
                 Style="{StaticResource Headline}"
                 SemanticProperties.HeadingLevel="Level1" />
+            <ContentView x:Name="contentContainer" />
         </VerticalStackLayout>
     </ScrollView>
 
