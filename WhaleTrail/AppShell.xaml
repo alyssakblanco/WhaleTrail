@@ -10,20 +10,26 @@
 
     <TabBar>
         <Tab Title="Trivia"
-             Icon="puzzle_piece_solid.svg">
+             Icon="puzzle_piece_solid.svg"
+             Route="triviaTab">
             <ShellContent ContentTemplate="{DataTemplate local:TriviaPage}" />
         </Tab>
         <Tab Title="My Trip"
-             Icon="location_dot_solid.svg">
+             Icon="location_dot_solid.svg"
+             Route="myTripTab">
             <ShellContent Title="Past"
+                          Route="Past"
                           ContentTemplate="{DataTemplate TabPages:PastTab}" />
             <ShellContent Title="Current"
+                          Route="Current"
                           ContentTemplate="{DataTemplate TabPages:CurrentTab}" />
             <ShellContent Title="Future"
+                          Route="Future"
                           ContentTemplate="{DataTemplate TabPages:FutureTab}" />
         </Tab>
         <Tab Title="Whales Info"
-             Icon="book_solid.svg">
+             Icon="book_solid.svg"
+             Route="whalesInfoTab">
             <ShellContent ContentTemplate="{DataTemplate local:WhalesPage}" />
         </Tab>
     </TabBar>
