@@ -4,13 +4,42 @@
              x:Class="WhaleTrail.Pages.TabPages.CurrentTab"
              Shell.NavBarIsVisible="False">
 
-    <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
-        <Label
-                Text="Current"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1" />
-    </VerticalStackLayout>
+    <ScrollView>
+        <VerticalStackLayout
+        Padding="30,0"
+        Spacing="25">
+            
+            <Label
+            Text="Current!"
+            Style="{StaticResource Headline}"
+            SemanticProperties.HeadingLevel="Level1" />
+
+            <CollectionView x:Name="sightingsList">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Grid.Column="0" Text="{Binding Name}" />
+                            <Label Grid.Column="1" Text="{Binding Date}" />
+                            <Label Grid.Column="2" Text="{Binding Time}" />
+                            <Label Grid.Column="3" Text="{Binding Lat}" />
+                            <Label Grid.Column="4" Text="{Binding Long}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
 
 </ContentPage>

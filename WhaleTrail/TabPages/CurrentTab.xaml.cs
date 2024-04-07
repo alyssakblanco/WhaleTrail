@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json;
+using WhaleTrail.Models;
 using WhaleTrail.Services;
 
 namespace WhaleTrail.Pages.TabPages
@@ -13,29 +14,72 @@ namespace WhaleTrail.Pages.TabPages
             InitializeComponent();
 
             _dataService = new DataService();
-            LoadDataAsync();
+
+            // TODO: add new fucntion to access from DB instead
+            // LoadDataAsync();
+            App.SightingsRepo.GetAllSightings();
+
+            sightingsList.ItemsSource = App.SightingsRepo.GetAllSightings();
         }
 
         private async void LoadDataAsync()
         {
+            Console.WriteLine("LoadDataAsync");
+            Console.WriteLine("LoadDataAsync");
+
             try
             {
+                Console.WriteLine("TRY");
+                Console.WriteLine("TRY");
+
                 var data = await _dataService.FetchEncounterDataAsync();
-                // Console.WriteLine(data);
+                Console.WriteLine("DATA");
+                Console.WriteLine(data);
+
                 var rootObject = JsonSerializer.Deserialize<Root>(data);
-                // Console.WriteLine("rootObject");
-                // Console.WriteLine(rootObject);
+                Console.WriteLine("rootObject");
+                Console.WriteLine(rootObject);
 
                 if (rootObject?.results != null)
                 {
+                    Console.WriteLine("not null");
+                    Console.WriteLine("not null");
+
                     var sightingsData = new List<SightingsData>();
 
                     foreach (var result in rootObject.results)
                     {
+                        Console.WriteLine("processing");
+                        Console.WriteLine("result");
+                        Console.WriteLine(result);
+                        
+
                         // Perform null checks on nested objects before accessing their properties
-                        if (result.individual.nickname != null && result.dateRange.startDate != null && result.location != null)
+                        if (result.individual != null 
+                            && result.individual.nickname != null
+                            && result.dateRange.startDate != null 
+                            && result.dateRange.startTime != null 
+                            && result.location != null)
                         {
+                            Console.WriteLine("result.individual.nickname??");
+                            Console.WriteLine(result.individual.nickname);
+                            Console.WriteLine("result.dateRange.startDate");
+                            Console.WriteLine(result.dateRange.startDate);
+                            Console.WriteLine("result.dateRange.startTime");
+                            Console.WriteLine(result.dateRange.startTime);
+                            Console.WriteLine("result.location");
+                            Console.WriteLine(result.location);
+
                             sightingsData.Add(new SightingsData
+                             {
+                                 Name = result.individual.nickname,
+                                 Date = result.dateRange.startDate,
+                                 Time = result.dateRange.startTime,
+                                 Lat = result.location.lat,
+                                 Long = result.location.lng
+                             });
+
+                            App.SightingsRepo.AddSighting(new Sighting
                             {
                                 Name = result.individual.nickname,
                                 Date = result.dateRange.startDate,
@@ -44,19 +88,25 @@ namespace WhaleTrail.Pages.TabPages
                                 Long = result.location.lng
                             });
                         }
+                        else
+                        {
+                            Console.WriteLine("ELSE");
+                        }
                     }
 
                     Console.WriteLine("sightingsData");
                     Console.WriteLine(sightingsData);
+
                     foreach (var sighting in sightingsData)
                     {
                         Console.WriteLine($"Name: {sighting.Name}, Date: {sighting.Date}, Time: {sighting.Time}, Lat: {sighting.Lat}, Long: {sighting.Long}");
                     }
                 }
-
             }
             catch (Exception ex)
             {
+                Console.WriteLine("CATCH");
+                Console.WriteLine("CATCH");
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-
-namespace WhaleTrail.Services
+﻿namespace WhaleTrail.Services
 {
     public class DataService
     {

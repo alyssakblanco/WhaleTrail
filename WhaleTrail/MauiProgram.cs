@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using WhaleTrail.Data;
 
 namespace WhaleTrail
 {
@@ -14,6 +15,9 @@ namespace WhaleTrail
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "sightings.db");
+            builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<SightingsRepo>(s, dbPath));
 
 #if DEBUG
     		builder.Logging.AddDebug();
