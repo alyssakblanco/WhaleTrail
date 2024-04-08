@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeoCoordinatePortable;
+using System;
 using System.Text.Json;
 using WhaleTrail.Models;
 using WhaleTrail.Services;
@@ -89,8 +90,45 @@ namespace WhaleTrail.Pages.TabPages
                 sightingsList.ItemsSource = App.SightingsRepo.GetAllSightings();
             }
         }
+
+        // FILTER FUNCTIONALITY
+        private void OnSortByNameClicked(object sender, EventArgs e)
+        {
+            var sortedByName = App.SightingsRepo.GetAllSightings().OrderBy(s => s.Name).ToList();
+            sightingsList.ItemsSource = sortedByName;
+        }
+
+        private void OnSortByDateClicked(object sender, EventArgs e)
+        {
+            var sortedByDate = App.SightingsRepo.GetAllSightings().OrderBy(s => s.Date).ToList();
+            sightingsList.ItemsSource = sortedByDate;
+        }
+
+        private void OnSortByDistanceClicked(object sender, EventArgs e)
+        {
+            var sortedByDistance = App.SightingsRepo.GetAllSightings().OrderBy(s =>
+                CalculateDistance(s.Lat, s.Long)
+            ).ToList();
+
+            sightingsList.ItemsSource = sortedByDistance;
+        }
+
+        private double CalculateDistance(double lat, double lng)
+        {
+            // Center point coordinates
+            // currently somewhere in Monterey CA until using phone GPS
+            double centerLat = 36.0;
+            double centerLong = -121.0;
+
+            // using GeoCoordinate.NetCore package
+            var sCoord = new GeoCoordinate(centerLat, centerLong);
+            var eCoord = new GeoCoordinate(lat, lng);
+
+            return sCoord.GetDistanceTo(eCoord);
+        }
     }
 
+    // UTILITY CLASSES
     public class SightingsData
     {
         public string Name { get; set; }
