@@ -1,5 +1,6 @@
 ﻿using GeoCoordinatePortable;
 using System;
+using System.Globalization;
 using System.Text.Json;
 using WhaleTrail.Models;
 using WhaleTrail.Services;
@@ -24,9 +25,28 @@ namespace WhaleTrail.Pages.TabPages
                 lastFetchTimestamp = DateTime.UtcNow.AddDays(-30);
             }
 
+            int count = App.SightingsRepo.GetAllSightings().Count;
+            Console.WriteLine("DateTime.UtcNow");
+            Console.WriteLine(DateTime.UtcNow);
+            Console.WriteLine("lastFetchTimestamp");
+            Console.WriteLine(lastFetchTimestamp);
+            Console.WriteLine("DB COUNT");
+            Console.WriteLine(count);
+
             // fetch data if more than a day since last
-            if ((DateTime.UtcNow - lastFetchTimestamp) > TimeSpan.FromDays(1))
+            if(count == 0)
             {
+                Console.WriteLine("NEW DB");
+                // call API & update database 
+                // default to last 30 days for new databases
+                LoadDataAsync(DateTime.UtcNow.AddDays(-30));
+
+                // update last fetch time
+                Preferences.Set("LastAPIFetch", DateTime.UtcNow);
+            }
+            else if ((DateTime.UtcNow - lastFetchTimestamp) > TimeSpan.FromDays(1))
+            {
+                Console.WriteLine("EXISTING DB");
                 // call API & update database 
                 LoadDataAsync(lastFetchTimestamp);
 
@@ -43,6 +63,7 @@ namespace WhaleTrail.Pages.TabPages
 
         private async void LoadDataAsync(DateTime lastFetchTimestamp)
         {
+            Console.WriteLine("HELLO??");
             try
             {
                 // call fetch function
@@ -58,18 +79,28 @@ namespace WhaleTrail.Pages.TabPages
                     foreach (var result in rootObject.results)
                     {
                         // Perform null checks on nested objects before accessing their properties
-                        if (result.individual != null 
-                            && result.individual.nickname != null
-                            && result.dateRange.startDate != null 
-                            && result.dateRange.startTime != null 
+                        if (result.individual != null
+                            && !string.IsNullOrWhiteSpace(result.individual.nickname)
+                            && result.dateRange != null
+                            && !string.IsNullOrWhiteSpace(result.dateRange.startDate)
+                            && !string.IsNullOrWhiteSpace(result.dateRange.startTime)
                             && result.location != null)
                         {
+                            // create date object
+                            // Parse the date and time strings into DateTime objects
+                            DateTime date = DateTime.ParseExact(result.dateRange.startDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+                            DateTime time = DateTime.ParseExact(result.dateRange.startTime, "HH:mm:ss", CultureInfo.InvariantCulture);
+                            // Combine the date and time into a single DateTime
+                            DateTime sightingDateTime = new DateTime(date.Year, date.Month, date.Day, time.Hour, time.Minute, time.Second);
+
+                            Console.WriteLine("sightingDateTime");
+                            Console.WriteLine(sightingDateTime.ToString("MM-dd-yy HH:mm"));
+
                             // add to DB
                             App.SightingsRepo.AddSighting(new Sighting
                             {
                                 Name = result.individual.nickname,
-                                Date = result.dateRange.startDate,
-                                Time = result.dateRange.startTime,
+                                Date = sightingDateTime.ToString("MM-dd-yy HH:mm"),
                                 Lat = result.location.lat,
                                 Long = result.location.lng
                             });
@@ -100,7 +131,15 @@ namespace WhaleTrail.Pages.TabPages
 
         private void OnSortByDateClicked(object sender, EventArgs e)
         {
-            var sortedByDate = App.SightingsRepo.GetAllSightings().OrderBy(s => s.Date).ToList();
+            var sortedByDate = App.SightingsRepo.GetAllSightings()
+                        .Select(s => new
+                        {
+                            Sighting = s,
+                            ParsedDate = DateTime.ParseExact(s.Date, "MM-dd-yy HH:mm", CultureInfo.InvariantCulture)
+                        })
+                        .OrderByDescending(x => x.ParsedDate)
+                        .Select(x => x.Sighting)
+                        .ToList();
             sightingsList.ItemsSource = sortedByDate;
         }
 
