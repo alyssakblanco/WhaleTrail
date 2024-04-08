@@ -16,6 +16,7 @@ namespace WhaleTrail
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            // dependency injection
             string dbPath = Path.Combine(FileSystem.AppDataDirectory, "sightings.db");
             builder.Services.AddSingleton(s => ActivatorUtilities.CreateInstance<SightingsRepo>(s, dbPath));
 

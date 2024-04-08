@@ -15,45 +15,47 @@ namespace WhaleTrail.Pages.TabPages
 
             _dataService = new DataService();
 
-            // TODO: add new fucntion to access from DB instead
-            // LoadDataAsync();
-            App.SightingsRepo.GetAllSightings();
+            // check last fetch time before calling API
+            var lastFetchTimestamp = Preferences.Get("LastAPIFetch", DateTime.MinValue);
+            if (lastFetchTimestamp == DateTime.MinValue)
+            {
+                // default to last 30 days if DateTime.MinValue is 0001-01-01
+                lastFetchTimestamp = DateTime.UtcNow.AddDays(-30);
+            }
 
-            sightingsList.ItemsSource = App.SightingsRepo.GetAllSightings();
+            // fetch data if more than a day since last
+            if ((DateTime.UtcNow - lastFetchTimestamp) > TimeSpan.FromDays(1))
+            {
+                // call API & update database 
+                LoadDataAsync(lastFetchTimestamp);
+
+                // update last fetch time
+                Preferences.Set("LastAPIFetch", DateTime.UtcNow);
+            }
+            else
+            {
+                // use DB
+                App.SightingsRepo.GetAllSightings();
+                sightingsList.ItemsSource = App.SightingsRepo.GetAllSightings();
+            }
         }
 
-        private async void LoadDataAsync()
+        private async void LoadDataAsync(DateTime lastFetchTimestamp)
         {
-            Console.WriteLine("LoadDataAsync");
-            Console.WriteLine("LoadDataAsync");
-
             try
             {
-                Console.WriteLine("TRY");
-                Console.WriteLine("TRY");
-
-                var data = await _dataService.FetchEncounterDataAsync();
-                Console.WriteLine("DATA");
-                Console.WriteLine(data);
+                // call fetch function
+                var data = await _dataService.FetchEncounterDataAsync(lastFetchTimestamp);
 
                 var rootObject = JsonSerializer.Deserialize<Root>(data);
-                Console.WriteLine("rootObject");
-                Console.WriteLine(rootObject);
 
+                // if there are any new results, add to DB
                 if (rootObject?.results != null)
                 {
-                    Console.WriteLine("not null");
-                    Console.WriteLine("not null");
-
                     var sightingsData = new List<SightingsData>();
 
                     foreach (var result in rootObject.results)
                     {
-                        Console.WriteLine("processing");
-                        Console.WriteLine("result");
-                        Console.WriteLine(result);
-                        
-
                         // Perform null checks on nested objects before accessing their properties
                         if (result.individual != null 
                             && result.individual.nickname != null
@@ -61,24 +63,7 @@ namespace WhaleTrail.Pages.TabPages
                             && result.dateRange.startTime != null 
                             && result.location != null)
                         {
-                            Console.WriteLine("result.individual.nickname??");
-                            Console.WriteLine(result.individual.nickname);
-                            Console.WriteLine("result.dateRange.startDate");
-                            Console.WriteLine(result.dateRange.startDate);
-                            Console.WriteLine("result.dateRange.startTime");
-                            Console.WriteLine(result.dateRange.startTime);
-                            Console.WriteLine("result.location");
-                            Console.WriteLine(result.location);
-
-                            sightingsData.Add(new SightingsData
-                             {
-                                 Name = result.individual.nickname,
-                                 Date = result.dateRange.startDate,
-                                 Time = result.dateRange.startTime,
-                                 Lat = result.location.lat,
-                                 Long = result.location.lng
-                             });
-
+                            // add to DB
                             App.SightingsRepo.AddSighting(new Sighting
                             {
                                 Name = result.individual.nickname,
@@ -88,26 +73,20 @@ namespace WhaleTrail.Pages.TabPages
                                 Long = result.location.lng
                             });
                         }
-                        else
-                        {
-                            Console.WriteLine("ELSE");
-                        }
-                    }
-
-                    Console.WriteLine("sightingsData");
-                    Console.WriteLine(sightingsData);
-
-                    foreach (var sighting in sightingsData)
-                    {
-                        Console.WriteLine($"Name: {sighting.Name}, Date: {sighting.Date}, Time: {sighting.Time}, Lat: {sighting.Lat}, Long: {sighting.Long}");
                     }
                 }
+                
+                // use DB data
+                App.SightingsRepo.GetAllSightings();
+                sightingsList.ItemsSource = App.SightingsRepo.GetAllSightings();
             }
             catch (Exception ex)
             {
-                Console.WriteLine("CATCH");
-                Console.WriteLine("CATCH");
                 Console.WriteLine($"An error occurred: {ex.Message}");
+
+                // use current database without updating
+                App.SightingsRepo.GetAllSightings();
+                sightingsList.ItemsSource = App.SightingsRepo.GetAllSightings();
             }
         }
     }
