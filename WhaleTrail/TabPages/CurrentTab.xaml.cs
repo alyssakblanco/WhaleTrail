@@ -26,18 +26,11 @@ namespace WhaleTrail.Pages.TabPages
             }
 
             int count = App.SightingsRepo.GetAllSightings().Count;
-            Console.WriteLine("DateTime.UtcNow");
-            Console.WriteLine(DateTime.UtcNow);
-            Console.WriteLine("lastFetchTimestamp");
-            Console.WriteLine(lastFetchTimestamp);
-            Console.WriteLine("DB COUNT");
-            Console.WriteLine(count);
 
             // fetch data if more than a day since last
             if(count == 0)
             {
-                Console.WriteLine("NEW DB");
-                // call API & update database 
+                // Console.WriteLine("NEW DB");
                 // default to last 30 days for new databases
                 LoadDataAsync(DateTime.UtcNow.AddDays(-30));
 
@@ -46,8 +39,7 @@ namespace WhaleTrail.Pages.TabPages
             }
             else if ((DateTime.UtcNow - lastFetchTimestamp) > TimeSpan.FromDays(1))
             {
-                Console.WriteLine("EXISTING DB");
-                // call API & update database 
+                // Console.WriteLine("EXISTING DB");
                 LoadDataAsync(lastFetchTimestamp);
 
                 // update last fetch time
@@ -55,6 +47,7 @@ namespace WhaleTrail.Pages.TabPages
             }
             else
             {
+                // Console.WriteLine("RECENTLY UPDATED");
                 // use DB
                 App.SightingsRepo.GetAllSightings();
                 sightingsList.ItemsSource = App.SightingsRepo.GetAllSightings();
@@ -63,7 +56,8 @@ namespace WhaleTrail.Pages.TabPages
 
         private async void LoadDataAsync(DateTime lastFetchTimestamp)
         {
-            Console.WriteLine("HELLO??");
+            // Console.WriteLine("LoadDataAsync");
+            // call API, fetch data & update database 
             try
             {
                 // call fetch function
@@ -93,9 +87,6 @@ namespace WhaleTrail.Pages.TabPages
                             // Combine the date and time into a single DateTime
                             DateTime sightingDateTime = new DateTime(date.Year, date.Month, date.Day, time.Hour, time.Minute, time.Second);
 
-                            Console.WriteLine("sightingDateTime");
-                            Console.WriteLine(sightingDateTime.ToString("MM-dd-yy HH:mm"));
-
                             // add to DB
                             App.SightingsRepo.AddSighting(new Sighting
                             {
@@ -122,7 +113,7 @@ namespace WhaleTrail.Pages.TabPages
             }
         }
 
-        // FILTER FUNCTIONALITY
+        // FILTER FUNCTIONS
         private void OnSortByNameClicked(object sender, EventArgs e)
         {
             var sortedByName = App.SightingsRepo.GetAllSightings().OrderBy(s => s.Name).ToList();
@@ -132,14 +123,14 @@ namespace WhaleTrail.Pages.TabPages
         private void OnSortByDateClicked(object sender, EventArgs e)
         {
             var sortedByDate = App.SightingsRepo.GetAllSightings()
-                        .Select(s => new
-                        {
-                            Sighting = s,
-                            ParsedDate = DateTime.ParseExact(s.Date, "MM-dd-yy HH:mm", CultureInfo.InvariantCulture)
-                        })
-                        .OrderByDescending(x => x.ParsedDate)
-                        .Select(x => x.Sighting)
-                        .ToList();
+                                                .Select(s => new
+                                                {
+                                                    Sighting = s,
+                                                    ParsedDate = DateTime.ParseExact(s.Date, "MM-dd-yy HH:mm", CultureInfo.InvariantCulture)
+                                                })
+                                                .OrderByDescending(x => x.ParsedDate)
+                                                .Select(x => x.Sighting)
+                                                .ToList();
             sightingsList.ItemsSource = sortedByDate;
         }
 
