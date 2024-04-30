@@ -4,18 +4,23 @@ using System.Globalization;
 using System.Text.Json;
 using WhaleTrail.Models;
 using WhaleTrail.Services;
+using Microsoft.Maui.Devices;
 
 namespace WhaleTrail.Pages.TabPages
 {
     public partial class CurrentTab : ContentPage
     {
         private DataService _dataService;
+        private double phoneLat;
+        private double phoneLng;
 
         public CurrentTab()
         {
             InitializeComponent();
 
             _dataService = new DataService();
+
+            GetLocation();
 
             // check last fetch time before calling API
             var lastFetchTimestamp = Preferences.Get("LastAPIFetch", DateTime.MinValue);
@@ -32,7 +37,7 @@ namespace WhaleTrail.Pages.TabPages
             {
                 // Console.WriteLine("NEW DB");
                 // default to last 30 days for new databases
-                LoadDataAsync(DateTime.UtcNow.AddDays(-30));
+                LoadDataAsync(DateTime.UtcNow.AddDays(-30), phoneLat, phoneLng);
 
                 // update last fetch time
                 Preferences.Set("LastAPIFetch", DateTime.UtcNow);
@@ -40,7 +45,7 @@ namespace WhaleTrail.Pages.TabPages
             else if ((DateTime.UtcNow - lastFetchTimestamp) > TimeSpan.FromDays(1))
             {
                 // Console.WriteLine("EXISTING DB");
-                LoadDataAsync(lastFetchTimestamp);
+                LoadDataAsync(lastFetchTimestamp, phoneLat, phoneLng);
 
                 // update last fetch time
                 Preferences.Set("LastAPIFetch", DateTime.UtcNow);
@@ -54,14 +59,48 @@ namespace WhaleTrail.Pages.TabPages
             }
         }
 
-        private async void LoadDataAsync(DateTime lastFetchTimestamp)
+        private async void GetLocation()
+        {
+            Console.WriteLine("GetLocation");
+            try
+            {
+                // Request the current location
+                var location = Geolocation.GetLastKnownLocationAsync().Result;
+
+                if (location != null)
+                {
+                    phoneLat = location.Latitude;
+                    phoneLng = location.Longitude;
+
+                    Console.WriteLine($"Latitude: {phoneLat}, Longitude!!: {phoneLng}");
+                    // Use the latitude and longitude as needed
+                }
+            }
+            catch (FeatureNotSupportedException fnsEx)
+            {
+                // Handle not supported on device exception
+                Console.WriteLine("FeatureNotSupportedException");
+            }
+            catch (PermissionException pEx)
+            {
+                // Handle permission exception
+                Console.WriteLine("PermissionException");
+            }
+            catch (Exception ex)
+            {
+                // Unable to get location
+                Console.WriteLine("Exception");
+            }
+        }
+
+        private async void LoadDataAsync(DateTime lastFetchTimestamp, double lat, double lng)
         {
             // Console.WriteLine("LoadDataAsync");
             // call API, fetch data & update database 
             try
             {
                 // call fetch function
-                var data = await _dataService.FetchEncounterDataAsync(lastFetchTimestamp);
+                var data = await _dataService.FetchEncounterDataAsync(lastFetchTimestamp, lat, lng);
 
                 var rootObject = JsonSerializer.Deserialize<Root>(data);
 

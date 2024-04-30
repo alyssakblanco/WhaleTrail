@@ -2,77 +2,34 @@
 {
     public partial class TriviaPage : ContentPage
     {
-
-        private int currentViewIndex = 0;
+        public int finalScore = 0;
 
         public TriviaPage()
         {
             InitializeComponent();
-            contentContainer.Content = GetContentView(0);
+            quizQuestions.IsVisible = false;
         }
 
-        private void OnChangeContentClicked(object? sender, EventArgs e)
+        void StartQuizClicked(System.Object sender, System.EventArgs e)
         {
-            currentViewIndex++;
-            contentContainer.Content = GetContentView(currentViewIndex);
+            quizQuestions.IsVisible = true;
+            startQuizBtn.IsVisible = false;
         }
 
-        private void OnResetClicked(object? sender, EventArgs e)
+        void FinishQuizClicked(System.Object sender, System.EventArgs e)
         {
-            currentViewIndex = 0;
-            contentContainer.Content = GetContentView(currentViewIndex);
+            quizQuestions.IsVisible = false;
+            ScoreQuiz();
+            score.IsVisible = true;
         }
 
-        private View GetContentView(int index)
+        void ScoreQuiz()
         {
-            var nextButton = new Button { Text = "Next" };
-            nextButton.Clicked += OnChangeContentClicked;
-
-            switch (index)
-            {
-                case 0:
-                    var startButton = new Button { Text = "Start" };
-                    startButton.Clicked += OnChangeContentClicked;
-
-                    return new StackLayout
-                    {
-                        Children =
-                        {
-                            new Label { Text = "Welcome to the Game" },
-                            startButton
-                        }
-                    };
-                case 1:
-                    return new StackLayout
-                    {
-                        Children =
-                        {
-                            new Label { Text = "Question 1" },
-                            nextButton
-                        }
-                    };
-                case 2:
-                    return new StackLayout
-                    {
-                        Children =
-                        {
-                            new Label { Text = "Question 2" },
-                            nextButton
-                        }
-                    };
-                default:
-                    var resetButton = new Button { Text = "Reset" };
-                    resetButton.Clicked += OnResetClicked;
-
-                    return new StackLayout
-                    {
-                        Children =
-                        {
-                            new Label { Text = "End Quiz" },
-                            resetButton
-                        }
-                    };
-            }
+            if (q1.IsChecked) { finalScore += 1; }
+            if (q2.IsChecked) { finalScore += 1; }
+            if (q3.IsChecked) { finalScore += 1; }
+            if (q4.IsChecked) { finalScore += 1; }
+            if (q5.IsChecked) { finalScore += 1; }
         }
     }
 }
