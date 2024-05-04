@@ -153,7 +153,7 @@ public class Individual
     public Avatar avatar { get; set; }
 }
 
-public class Location
+public class GeoLocation
 {
     public double lat { get; set; }
     public double lng { get; set; }

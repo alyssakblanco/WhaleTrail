@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Controls.Hosting;
 using WhaleTrail.Data;
 
 namespace WhaleTrail
@@ -14,7 +15,8 @@ namespace WhaleTrail
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                });
+                })
+                .UseMauiMaps();
 
             // dependency injection
             string dbPath = Path.Combine(FileSystem.AppDataDirectory, "sightings.db");

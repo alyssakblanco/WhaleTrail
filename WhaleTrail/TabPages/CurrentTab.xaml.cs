@@ -1,11 +1,11 @@
 ﻿using GeoCoordinatePortable;
-using System;
 using System.Globalization;
 using System.Text.Json;
 using WhaleTrail.Models;
 using WhaleTrail.Services;
-using Microsoft.Maui.Devices;
-using Microsoft.Maui.Devices.Sensors;
+using Microsoft.Maui.Controls.Maps;
+using Microsoft.Maui.Maps;
+using Map = Microsoft.Maui.Controls.Maps.Map;
 
 namespace WhaleTrail.Pages.TabPages
 {
@@ -104,6 +104,8 @@ namespace WhaleTrail.Pages.TabPages
                 {
                     phoneLat = location.Latitude;
                     phoneLng = location.Longitude;
+                    CenterMap(phoneLat, phoneLng);
+
                     Console.WriteLine($"Latitude: {phoneLat}, Longitude: {phoneLng}");
                 }
                 else
@@ -112,6 +114,7 @@ namespace WhaleTrail.Pages.TabPages
                     // setting default GPS location cant be found
                     phoneLat = 36.645;
                     phoneLng = -121.872;
+                    CenterMap(phoneLat, phoneLng);
                 }
             }
             catch (Exception ex)
@@ -120,7 +123,29 @@ namespace WhaleTrail.Pages.TabPages
                 // setting default GPS location cant be found
                 phoneLat = 36.645;
                 phoneLng = -121.872;
+                CenterMap(phoneLat, phoneLng);
             }
+        }
+
+        private void CenterMap(double latitude, double longitude)
+        {
+            Console.WriteLine("CenterMap");
+            Console.WriteLine($"CM phoneLat {latitude}");
+            Console.WriteLine($"CM phoneLng {longitude}");
+
+            Location gpsPos = new Location(latitude, longitude);
+            MapSpan mapSpan = new MapSpan(gpsPos, 0.01, 0.01);
+
+            map.MoveToRegion(mapSpan);
+
+            Pin pin = new Pin
+            {
+                Label = "Current Location",
+                Address = "you are here",
+                Type = PinType.Place,
+                Location = new Location(36.9628066, -122.0194722)
+            };
+            map.Pins.Add(pin);
         }
 
 
@@ -273,7 +298,7 @@ namespace WhaleTrail.Pages.TabPages
         public Avatar avatar { get; set; }
     }
 
-    public class Location
+    public class GeoLocation
     {
         public double lat { get; set; }
         public double lng { get; set; }
@@ -283,7 +308,7 @@ namespace WhaleTrail.Pages.TabPages
     {
         public int id { get; set; }
         public DateRange dateRange { get; set; }
-        public Location location { get; set; }
+        public GeoLocation location { get; set; }
         public string region { get; set; }
         public Individual individual { get; set; }
         public string species { get; set; }
