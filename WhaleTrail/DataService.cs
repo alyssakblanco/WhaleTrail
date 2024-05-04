@@ -11,6 +11,11 @@
 
         public async Task<string> FetchEncounterDataAsync(DateTime lastFetchTimestamp, double lat, double lng)
         {
+            Console.WriteLine("FetchEncounterDataAsync");
+            Console.WriteLine($"lat {lat}");
+            Console.WriteLine($"lng {lng}");
+            Console.WriteLine($"timestamp {lastFetchTimestamp}");
+
             var request = new HttpRequestMessage(HttpMethod.Post, "https://critterspot.happywhale.com/v1/csx/encounters/byloc");
             request.Headers.Add("Authorization", "Bearer e9c1598e-4fea-4194-a7ac-303f3dafa34a");
 

@@ -5,6 +5,7 @@ using System.Text.Json;
 using WhaleTrail.Models;
 using WhaleTrail.Services;
 using Microsoft.Maui.Devices;
+using Microsoft.Maui.Devices.Sensors;
 
 namespace WhaleTrail.Pages.TabPages
 {
@@ -17,25 +18,36 @@ namespace WhaleTrail.Pages.TabPages
         public CurrentTab()
         {
             InitializeComponent();
+        }
 
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await InitializeAsync();
+        }
+
+        private async Task InitializeAsync()
+        {
             _dataService = new DataService();
-
-            GetLocation();
+            await GetLocationAsync();
 
             // check last fetch time before calling API
             var lastFetchTimestamp = Preferences.Get("LastAPIFetch", DateTime.MinValue);
+            Console.WriteLine($"lastFetchTimestamp {lastFetchTimestamp}");
+            
             if (lastFetchTimestamp == DateTime.MinValue)
             {
                 // default to last 30 days if DateTime.MinValue is 0001-01-01
                 lastFetchTimestamp = DateTime.UtcNow.AddDays(-30);
+                Console.WriteLine($"SET lastFetchTimestamp {lastFetchTimestamp}");
             }
 
             int count = App.SightingsRepo.GetAllSightings().Count;
 
             // fetch data if more than a day since last
-            if(count == 0)
+            if (count == 0)
             {
-                // Console.WriteLine("NEW DB");
+                Console.WriteLine("NEW DB");
                 // default to last 30 days for new databases
                 LoadDataAsync(DateTime.UtcNow.AddDays(-30), phoneLat, phoneLng);
 
@@ -44,7 +56,10 @@ namespace WhaleTrail.Pages.TabPages
             }
             else if ((DateTime.UtcNow - lastFetchTimestamp) > TimeSpan.FromDays(1))
             {
-                // Console.WriteLine("EXISTING DB");
+                Console.WriteLine("EXISTING DB");
+                Console.WriteLine($"EDB lastFetchTimestamp {lastFetchTimestamp}");
+                Console.WriteLine($"EDB phoneLat {phoneLat}");
+                Console.WriteLine($"EDB phoneLng {phoneLng}");
                 LoadDataAsync(lastFetchTimestamp, phoneLat, phoneLng);
 
                 // update last fetch time
@@ -52,46 +67,62 @@ namespace WhaleTrail.Pages.TabPages
             }
             else
             {
-                // Console.WriteLine("RECENTLY UPDATED");
+                Console.WriteLine("RECENTLY UPDATED");
                 // use DB
                 App.SightingsRepo.GetAllSightings();
                 sightingsList.ItemsSource = App.SightingsRepo.GetAllSightings();
             }
         }
 
-        private async void GetLocation()
+        private async Task GetLocationAsync()
         {
-            Console.WriteLine("GetLocation");
+            Console.WriteLine("Checking location permissions...");
+            var permissionStatus = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+
+            if (permissionStatus != PermissionStatus.Granted)
+            {
+                Console.WriteLine("Requesting location permissions...");
+                permissionStatus = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+
+                if (permissionStatus != PermissionStatus.Granted)
+                {
+                    Console.WriteLine("Location permission denied.");
+                    // setting default GPS location if user denies
+                    phoneLat = 36.645;
+                    phoneLng = -121.872;
+
+                    return;
+                }
+            }
+
             try
             {
-                // Request the current location
-                var location = Geolocation.GetLastKnownLocationAsync().Result;
+                var location = await Geolocation.GetLocationAsync();
+                Console.WriteLine(location);
 
                 if (location != null)
                 {
                     phoneLat = location.Latitude;
                     phoneLng = location.Longitude;
-
-                    Console.WriteLine($"Latitude: {phoneLat}, Longitude!!: {phoneLng}");
-                    // Use the latitude and longitude as needed
+                    Console.WriteLine($"Latitude: {phoneLat}, Longitude: {phoneLng}");
                 }
-            }
-            catch (FeatureNotSupportedException fnsEx)
-            {
-                // Handle not supported on device exception
-                Console.WriteLine("FeatureNotSupportedException");
-            }
-            catch (PermissionException pEx)
-            {
-                // Handle permission exception
-                Console.WriteLine("PermissionException");
+                else
+                {
+                    Console.WriteLine("No location available.");
+                    // setting default GPS location cant be found
+                    phoneLat = 36.645;
+                    phoneLng = -121.872;
+                }
             }
             catch (Exception ex)
             {
-                // Unable to get location
-                Console.WriteLine("Exception");
+                Console.WriteLine("Exception: " + ex.Message);
+                // setting default GPS location cant be found
+                phoneLat = 36.645;
+                phoneLng = -121.872;
             }
         }
+
 
         private async void LoadDataAsync(DateTime lastFetchTimestamp, double lat, double lng)
         {
