@@ -134,20 +134,21 @@ namespace WhaleTrail.Pages.TabPages
             Console.WriteLine($"CM phoneLng {longitude}");
 
             Location gpsPos = new Location(latitude, longitude);
-            MapSpan mapSpan = new MapSpan(gpsPos, 0.01, 0.01);
+            MapSpan mapSpan = new MapSpan(gpsPos, 0.8, 0.8);
 
             map.MoveToRegion(mapSpan);
+
+            SetMapPins();
 
             Pin pin = new Pin
             {
                 Label = "Current Location",
                 Address = "you are here",
                 Type = PinType.Place,
-                Location = new Location(36.9628066, -122.0194722)
+                Location = gpsPos
             };
             map.Pins.Add(pin);
         }
-
 
         private async void LoadDataAsync(DateTime lastFetchTimestamp, double lat, double lng)
         {
@@ -208,6 +209,22 @@ namespace WhaleTrail.Pages.TabPages
             }
         }
 
+        private void SetMapPins()
+        {
+            var sightings = App.SightingsRepo.GetAllSightings(); 
+            foreach (var sighting in sightings)
+            {
+                var pin = new Pin
+                {
+                    Label = sighting.Name, 
+                    Type = PinType.Place,
+                    Location = new Location(sighting.Lat, sighting.Long) 
+                };
+
+                map.Pins.Add(pin);
+            }
+        }
+
         // FILTER FUNCTIONS
         private void OnSortByNameClicked(object sender, EventArgs e)
         {
@@ -250,6 +267,17 @@ namespace WhaleTrail.Pages.TabPages
             var eCoord = new GeoCoordinate(lat, lng);
 
             return sCoord.GetDistanceTo(eCoord);
+        }
+
+        // SIGHTING MODAL SHOW / HIDE
+        private void ShowModal(object sender, EventArgs e)
+        {
+            modalScrollView.IsVisible = true;
+        }
+        
+        private void CloseModal(object sender, EventArgs e)
+        {
+            modalScrollView.IsVisible = false;
         }
     }
 

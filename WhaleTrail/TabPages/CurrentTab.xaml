@@ -5,74 +5,89 @@
              x:Class="WhaleTrail.Pages.TabPages.CurrentTab"
              Shell.NavBarIsVisible="False">
 
-    <ScrollView>
-        <VerticalStackLayout
-        Padding="5"
-        Spacing="25">
+    <AbsoluteLayout>
+        <maps:Map x:Name="map"
+            AbsoluteLayout.LayoutBounds="0,0,1,1"
+            AbsoluteLayout.LayoutFlags="All"
+            HorizontalOptions="FillAndExpand"
+            VerticalOptions="FillAndExpand" />
 
-            <Label
-            Text="Map"
-            Style="{StaticResource Headline}"
-            SemanticProperties.HeadingLevel="Level1" />
-            <maps:Map x:Name="map" 
-             HorizontalOptions="FillAndExpand"
-             VerticalOptions="FillAndExpand"/>
+        <Button Text="Details"
+                AbsoluteLayout.LayoutBounds="0.5, 1, 100, 50"
+                AbsoluteLayout.LayoutFlags="PositionProportional"
+                Clicked="ShowModal" />
 
-            <Label
-            Text="Sightings"
-            Style="{StaticResource Headline}"
-            SemanticProperties.HeadingLevel="Level1" />
+        <!-- popup sightings table -->
+        <ScrollView x:Name="modalScrollView"
+            IsVisible="False"
+            BackgroundColor="#FFFFFFA0"
+            AbsoluteLayout.LayoutBounds="0.5, 0.5, 0.9, 0.9"
+            AbsoluteLayout.LayoutFlags="All">
+            <Frame CornerRadius="20"
+                Padding="10"
+                HorizontalOptions="Center"
+                VerticalOptions="CenterAndExpand">
+                <StackLayout Spacing="20">
 
-            <Label
-            Text="Sort by:" />
-            <HorizontalStackLayout
-                Spacing="2">
-                <Button Text="Name" Clicked="OnSortByNameClicked" />
-                <Button Text="Most Recent" Clicked="OnSortByDateClicked" />
-                <Button Text="Closest" Clicked="OnSortByDistanceClicked" />
-            </HorizontalStackLayout>
-            
-            <Grid Padding="5" ColumnSpacing="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                </Grid.ColumnDefinitions>
+                    <!-- Content of the modal -->
+                    <Label
+                    Text="Sightings"
+                    Style="{StaticResource Headline}"
+                    SemanticProperties.HeadingLevel="Level1" />
 
-                <Label Grid.Column="0" Text="Name" FontAttributes="Bold" HorizontalTextAlignment="Start"/>
-                <Label Grid.Column="1" Text="Date" FontAttributes="Bold" HorizontalTextAlignment="End"/>
-                <Label Grid.Column="2" Text="Latitude" FontAttributes="Bold" HorizontalTextAlignment="End"/>
-                <Label Grid.Column="3" Text="Longitude" FontAttributes="Bold" HorizontalTextAlignment="End"/>
-            </Grid>
-            
-            <CollectionView x:Name="sightingsList">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Padding="5"
-                              RowSpacing="5"
-                              ColumnSpacing="10">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="1*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                    <Label
+                    Text="Sort by:" />
+                    <HorizontalStackLayout
+                    Spacing="2">
+                        <Button Text="Name" Clicked="OnSortByNameClicked" />
+                        <Button Text="Most Recent" Clicked="OnSortByDateClicked" />
+                        <Button Text="Closest" Clicked="OnSortByDistanceClicked" />
+                    </HorizontalStackLayout>
 
-                            <Label Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" VerticalOptions="Center" />
-                            <Label Grid.Column="1" Text="{Binding Date}" VerticalOptions="Center" HorizontalTextAlignment="Center"/>
-                            <Label Grid.Column="2" Text="{Binding Lat, StringFormat='{0:0.0000}'}" VerticalOptions="Center" HorizontalTextAlignment="End"/>
-                            <Label Grid.Column="3" Text="{Binding Long, StringFormat='{0:0.0000}'}" VerticalOptions="Center" HorizontalTextAlignment="End"/>
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                    <Grid Padding="5" ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
 
+                        <Label Grid.Column="0" Text="Name" FontAttributes="Bold" HorizontalTextAlignment="Start"/>
+                        <Label Grid.Column="1" Text="Date" FontAttributes="Bold" HorizontalTextAlignment="End"/>
+                        <Label Grid.Column="2" Text="Latitude" FontAttributes="Bold" HorizontalTextAlignment="End"/>
+                        <Label Grid.Column="3" Text="Longitude" FontAttributes="Bold" HorizontalTextAlignment="End"/>
+                    </Grid>
 
-        </VerticalStackLayout>
-    </ScrollView>
+                    <CollectionView x:Name="sightingsList">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="5"
+                                  RowSpacing="5"
+                                  ColumnSpacing="10">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="1*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" VerticalOptions="Center" />
+                                    <Label Grid.Column="1" Text="{Binding Date}" VerticalOptions="Center" HorizontalTextAlignment="Center"/>
+                                    <Label Grid.Column="2" Text="{Binding Lat, StringFormat='{0:0.0000}'}" VerticalOptions="Center" HorizontalTextAlignment="End"/>
+                                    <Label Grid.Column="3" Text="{Binding Long, StringFormat='{0:0.0000}'}" VerticalOptions="Center" HorizontalTextAlignment="End"/>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Button Text="Close" Clicked="CloseModal"/>
+
+                </StackLayout>
+            </Frame>
+        </ScrollView>
+    </AbsoluteLayout>
 
 </ContentPage>
