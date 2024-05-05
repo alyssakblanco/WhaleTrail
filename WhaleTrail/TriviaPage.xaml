@@ -4,74 +4,70 @@
              x:Class="WhaleTrail.TriviaPage">
 
     <ScrollView>
-        <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
-            <Label
-                Text="Trivia"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1" />
-            <!--<ContentView x:Name="contentContainer" />-->
-            <Button Text="Start Quiz"
-                    Clicked="StartQuizClicked"
-                    x:Name="startQuizBtn"/>
+        <VerticalStackLayout Spacing="25" Padding="30">
+            <!-- Start -->
+            <VerticalStackLayout x:Name="StartLayout">
+                <Label FontSize="24" Text="Trivia"/>
+                <Label FontSize="14" Text="How whale can you answer these questions?"/>
+                <Button Text="Start!"
+                Clicked="StartQuiz" />
+            </VerticalStackLayout>
 
-            <!-- TODO SAVE AS RESOURCE FILE -->
-            <StackLayout x:Name="quizQuestions">
-                <StackLayout>
-                    <Label Text="What is a group of whales called?" />
-                    <RadioButton Content="Cat" />
-                    <RadioButton x:Name="q1" Content="Pod" />
-                    <RadioButton Content="Elephant" />
-                    <RadioButton Content="Monkey" />
-                </StackLayout>
+            <!-- Quiz -->
+            <VerticalStackLayout x:Name="QuizLayout" IsVisible="False">
+                <Label FontSize="20" Text="Good luck!"/>
 
-                <StackLayout>
-                    <Label Text="What is the largest animal on Earth?" />
-                    <RadioButton Content="Cat" />
-                    <RadioButton x:Name="q2" Content="Blue Whale" />
-                    <RadioButton Content="Elephant" />
-                    <RadioButton Content="Monkey" />
-                </StackLayout>
+                <VerticalStackLayout>
+                    <Label FontSize="14" Text="How whale can you answer these questions?"/>
+                    <RadioButton Content="Option 1" GroupName="q1"/>
+                    <RadioButton Content="Option 2" GroupName="q1"/>
+                    <RadioButton Content="Option 3" GroupName="q1"/>
+                    <RadioButton Content="Option 3" GroupName="q1" x:Name="answer0"/>
+                </VerticalStackLayout>
 
-                <StackLayout>
-                    <Label Text="What species of whale haunts Captain Ahab in Herman Melville’s Moby Dick?" />
-                    <RadioButton Content="Cat" />
-                    <RadioButton x:Name="q3" Content="Sperm Whale" />
-                    <RadioButton Content="Elephant" />
-                    <RadioButton Content="Monkey" />
-                </StackLayout>
+                <VerticalStackLayout>
+                    <Label FontSize="14" Text="How whale can you answer these questions?"/>
+                    <RadioButton Content="Option 1" GroupName="q2"/>
+                    <RadioButton Content="Option 2" GroupName="q2"/>
+                    <RadioButton Content="Option 3" GroupName="q2"/>
+                    <RadioButton Content="Option 3" GroupName="q2" x:Name="answer1"/>
+                </VerticalStackLayout>
 
-                <StackLayout>
-                    <Label Text="Approximately how many pounds does the average sperm whale's heart weigh?" />
-                    <RadioButton Content="Cat" />
-                    <RadioButton x:Name="q4" Content="277" />
-                    <RadioButton Content="Elephant" />
-                    <RadioButton Content="Monkey" />
-                </StackLayout>
+                <VerticalStackLayout>
+                    <Label FontSize="14" Text="How whale can you answer these questions?"/>
+                    <RadioButton Content="Option 1" GroupName="q3"/>
+                    <RadioButton Content="Option 2" GroupName="q3"/>
+                    <RadioButton Content="Option 3" GroupName="q3"/>
+                    <RadioButton Content="Option 3" GroupName="q3" x:Name="answer2"/>
+                </VerticalStackLayout>
 
-                <StackLayout>
-                    <Label Text="Which of the following classifications of mammal do whales belong to?" />
-                    <RadioButton Content="Cat" />
-                    <RadioButton x:Name="q5" Content="Cetacea" />
-                    <RadioButton Content="Elephant" />
-                    <RadioButton Content="Monkey" />
-                </StackLayout>
+                <VerticalStackLayout>
+                    <Label FontSize="14" Text="How whale can you answer these questions?"/>
+                    <RadioButton Content="Option 1" GroupName="q4"/>
+                    <RadioButton Content="Option 2" GroupName="q4"/>
+                    <RadioButton Content="Option 3" GroupName="q4"/>
+                    <RadioButton Content="Option 3" GroupName="q4" x:Name="answer3"/>
+                </VerticalStackLayout>
 
-                <Button Text="Finish Quiz"
-                    Clicked="FinishQuizClicked"
-                    x:Name="finishQuizBtn"/>
-            </StackLayout>
+                <VerticalStackLayout>
+                    <Label FontSize="14" Text="How whale can you answer these questions?"/>
+                    <RadioButton Content="Option 1" GroupName="q5"/>
+                    <RadioButton Content="Option 2" GroupName="q5"/>
+                    <RadioButton Content="Option 3" GroupName="q5"/>
+                    <RadioButton Content="Option 3" GroupName="q5" x:Name="answer4"/>
+                </VerticalStackLayout>
 
-            <StackLayout  x:Name="score">
-                <Label
-                Text="Score"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level2" />
-                <Label Text="{Binding finalScore}" />
+                <Button Text="Finish"
+                Clicked="Finish" />
+            </VerticalStackLayout>
 
-            </StackLayout>
-       
+            <!-- End -->
+            <VerticalStackLayout x:Name="EndLayout" IsVisible="False">
+                <Label x:Name="score" FontSize="24" />
+                <Label FontSize="20" Text="Sea, that wasnt so hard."/>
+                <Button Text="Start Over"
+                Clicked="Reset" />
+            </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
 

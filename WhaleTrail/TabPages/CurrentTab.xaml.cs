@@ -210,7 +210,7 @@ namespace WhaleTrail.Pages.TabPages
                 sightingsList.ItemsSource = App.SightingsRepo.GetAllSightings();
             }
         }
-
+        // TODO: show whale info on click
         private void SetMapPins()
         {
             var sightings = App.SightingsRepo.GetAllSightings(); 

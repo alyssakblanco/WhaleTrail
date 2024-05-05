@@ -2,34 +2,52 @@
 {
     public partial class TriviaPage : ContentPage
     {
-        public int finalScore = 0;
+        private int quizScore;
 
         public TriviaPage()
         {
             InitializeComponent();
-            quizQuestions.IsVisible = false;
         }
 
-        void StartQuizClicked(System.Object sender, System.EventArgs e)
+        public void StartQuiz(object sender, EventArgs e)
         {
-            quizQuestions.IsVisible = true;
-            startQuizBtn.IsVisible = false;
+            quizScore = 0;
+            StartLayout.IsVisible = false;
+            QuizLayout.IsVisible = true;
         }
 
-        void FinishQuizClicked(System.Object sender, System.EventArgs e)
+        public void Finish(object sender, EventArgs e)
         {
-            quizQuestions.IsVisible = false;
-            ScoreQuiz();
-            score.IsVisible = true;
+            if (answer0.IsChecked == true)
+            {
+                quizScore++;
+            }
+            if (answer1.IsChecked == true)
+            {
+                quizScore++;
+            }
+            if (answer2.IsChecked == true)
+            {
+                quizScore++;
+            }
+            if (answer3.IsChecked == true)
+            {
+                quizScore++;
+            }
+            if (answer4.IsChecked == true)
+            {
+                quizScore++;
+            }
+
+            score.Text = $"{quizScore} / 5";
+            QuizLayout.IsVisible = false;
+            EndLayout.IsVisible = true;
         }
 
-        void ScoreQuiz()
+        public void Reset(object sender, EventArgs e)
         {
-            if (q1.IsChecked) { finalScore += 1; }
-            if (q2.IsChecked) { finalScore += 1; }
-            if (q3.IsChecked) { finalScore += 1; }
-            if (q4.IsChecked) { finalScore += 1; }
-            if (q5.IsChecked) { finalScore += 1; }
+            EndLayout.IsVisible = false;
+            StartLayout.IsVisible = true;
         }
     }
 }
