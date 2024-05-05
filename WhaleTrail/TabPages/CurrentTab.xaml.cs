@@ -5,7 +5,7 @@ using WhaleTrail.Models;
 using WhaleTrail.Services;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
-using Map = Microsoft.Maui.Controls.Maps.Map;
+using Maui = Microsoft.Maui.Devices.Sensors;
 
 namespace WhaleTrail.Pages.TabPages
 {
@@ -133,7 +133,7 @@ namespace WhaleTrail.Pages.TabPages
             Console.WriteLine($"CM phoneLat {latitude}");
             Console.WriteLine($"CM phoneLng {longitude}");
 
-            Location gpsPos = new Location(latitude, longitude);
+            Maui.Location gpsPos = new Maui.Location(latitude, longitude);
             MapSpan mapSpan = new MapSpan(gpsPos, 0.8, 0.8);
 
             map.MoveToRegion(mapSpan);
@@ -152,7 +152,8 @@ namespace WhaleTrail.Pages.TabPages
 
         private async void LoadDataAsync(DateTime lastFetchTimestamp, double lat, double lng)
         {
-            // Console.WriteLine("LoadDataAsync");
+            Console.WriteLine("LoadDataAsync");
+            Console.WriteLine($"lastFetchTimestamp: {lastFetchTimestamp}");
             // call API, fetch data & update database 
             try
             {
@@ -186,6 +187,7 @@ namespace WhaleTrail.Pages.TabPages
                             // add to DB
                             App.SightingsRepo.AddSighting(new Sighting
                             {
+                                Id = result.individual.id,
                                 Name = result.individual.nickname,
                                 Date = sightingDateTime.ToString("MM-dd-yy HH:mm"),
                                 Lat = result.location.lat,
@@ -218,7 +220,7 @@ namespace WhaleTrail.Pages.TabPages
                 {
                     Label = sighting.Name, 
                     Type = PinType.Place,
-                    Location = new Location(sighting.Lat, sighting.Long) 
+                    Location = new Maui.Location(sighting.Lat, sighting.Long) 
                 };
 
                 map.Pins.Add(pin);

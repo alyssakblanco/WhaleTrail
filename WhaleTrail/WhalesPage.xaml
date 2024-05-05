@@ -11,7 +11,10 @@
                 Text="Whales"
                 Style="{StaticResource Headline}"
                 SemanticProperties.HeadingLevel="Level1" />
-            <ContentView x:Name="contentContainer" />
+
+            <VerticalStackLayout  x:Name="cardsPanel">
+                <!-- Dynamic content will be added here -->
+            </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>
 

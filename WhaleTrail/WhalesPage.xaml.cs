@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using Microsoft.Maui.Controls.PlatformConfiguration;
+using System.Text.Json;
 using WhaleTrail.Models;
 using WhaleTrail.Services;
 
@@ -6,104 +7,157 @@ namespace WhaleTrail
 {
     public partial class WhalesPage : ContentPage
     {
-        private int currentViewIndex = 0;
-        private Button? whale1Button;
-        private Button? whale2Button;
-        private StackLayout? whalesLayout;
         private DataService _dataService;
 
         public WhalesPage()
         {
             InitializeComponent();
-            contentContainer.Content = GetContentView(0);
 
             _dataService = new DataService();
-            LoadDataAsync();
-
+            AddWhaleInfo();
         }
 
-        private async void LoadDataAsync()
+        private async void AddWhaleInfo()
         {
-            Console.WriteLine("ATTEMPT 1");
+            int[] idsArray = GetSightingIds();
 
-            try
+            foreach (int id in idsArray)
             {
-                var data = await _dataService.FetchWhaleDataAsync("93975");
-                var rootObject = JsonSerializer.Deserialize<Root>(data);
-                Console.WriteLine(data);
-                Console.WriteLine(rootObject);
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-        }
-
-        private void SetupWhalesLayout()
-        {
-            whale1Button = new Button { Text = "Learn More" };
-            whale1Button.Clicked += (sender, e) => OnChangeContentClicked(1);
-            whale2Button = new Button { Text = "Learn More" };
-            whale2Button.Clicked += (sender, e) => OnChangeContentClicked(2);
-
-            whalesLayout = new StackLayout
-            {
-                Children =
+                if (App.WhaleInfoRepo.IsIdInDatabase(id))
                 {
-                    new Label { Text = "Whale Name 1" },
-                    whale1Button,
-                    new Label { Text = "Whale Name 2" },
-                    whale2Button
+                    Console.WriteLine("Already in database");
                 }
-            };
+                else
+                {
+                    string whaleId = id.ToString();
+                    
+                    try
+                    {
+                        var data = await _dataService.FetchWhaleDataAsync(whaleId);
+                        var rootObject = JsonSerializer.Deserialize<Root>(data);
+                       // Console.WriteLine($"data!!!: {data}");
+                       // Console.WriteLine(rootObject);
+
+                        string nickname;
+                        string species;
+                        string sex;
+                        string bio;
+
+
+                        if (rootObject.individual.nickname == null)
+                        {
+                            nickname = "Nameless";
+                        }
+                        else
+                        {
+                            nickname = rootObject.individual.nickname.ToString();
+                        }
+
+                        if (rootObject.individual.species == null)
+                        {
+                            species = "Whale";
+                        }
+                        else
+                        {
+                            species = rootObject.individual.species;
+                        }
+
+                        if (rootObject.individual.sex == null)
+                        {
+                            sex = "N/A";
+                        }
+                        else
+                        {
+                            sex = rootObject.individual.sex.ToString();
+                        }
+
+                        if (rootObject.bio == null)
+                        {
+                            bio = "No info :(";
+                        }
+                        else
+                        {
+                            bio = rootObject.bio.ToString();
+                        }
+
+                        Console.WriteLine($"id: {rootObject.individual.id}");
+                        Console.WriteLine($"name: {nickname}");
+                        Console.WriteLine($"species: {species}");
+                        Console.WriteLine($"sex: {sex}");
+                        Console.WriteLine($"Img: {rootObject.individual.avatar.url}");
+                        Console.WriteLine($"bio: {bio}");
+
+                        App.WhaleInfoRepo.AddWhale(new WhaleInfo
+                        {
+                            Id = rootObject.individual.id,
+                            Name = nickname,
+                            Species = species,
+                            Sex = sex,
+                            Img = rootObject.individual.avatar.url,
+                            Bio = bio
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred: {ex.Message}");
+                    }
+                }
+            }
+
+            CreateInfoCards();
         }
 
-        private void OnChangeContentClicked(int index)
+        private int[] GetSightingIds()
         {
-            currentViewIndex = index;
-            contentContainer.Content = GetContentView(currentViewIndex);
-        }
+            // Assuming App.SightingsRepo.All() returns an IEnumerable<Sighting>
+            var sightings = App.SightingsRepo.GetAllSightings();
 
-        private View GetContentView(int index)
-        {
-            // The reset button
-            var reset = new Button { Text = "Go Back" };
-            reset.Clicked += (sender, e) => OnChangeContentClicked(0);
+            // Create a list to store the Ids
+            List<int> ids = new List<int>();
 
-            // Switch based on the index
-            switch (index)
+            // Loop through all sightings
+            foreach (var sighting in sightings)
             {
-                case 1:
-                    return new StackLayout
-                    {
-                        Children =
-                        {
-                            new Label { Text = "Whale 1" },
-                            reset
-                        }
-                    };
-                case 2:
-                    return new StackLayout
-                    {
-                        Children =
-                        {
-                            new Label { Text = "Whale 2" },
-                            reset
-                        }
-                    };
-                default:
-                    SetupWhalesLayout(); 
-                    return whalesLayout;
+                // Add each sighting's Id to the list
+                ids.Add(sighting.Id);
+            }
+
+            // Convert the list to an array and return it
+            int[] idsArray = ids.ToArray();
+            Console.WriteLine("SIGHTINGS ARRAY");
+            Console.WriteLine(string.Join(", ", idsArray));
+            return ids.ToArray();
+        }
+        
+        private void CreateInfoCards()
+        {
+            var whales = App.WhaleInfoRepo.GetAllWhales(); 
+
+            foreach (var whale in whales)
+            {
+                var card = new VerticalStackLayout { Spacing = 10, Padding = 5 };
+                var whaleImage = new Image { Source = ImageSource.FromUri(new Uri(whale.Img)), HeightRequest = 100 };
+                var nameLabel = new Label { Text = whale.Name, FontSize = 18 };
+                var speciesLabel = new Label { Text = $"Species: {whale.Species}", FontSize = 14 };
+                var sexLabel = new Label { Text = $"Sex: {whale.Sex}", FontSize = 14 };
+                var descriptionLabel = new Label { Text = whale.Bio, FontSize = 14 };
+
+                card.Children.Add(whaleImage);
+                card.Children.Add(nameLabel);
+                card.Children.Add(speciesLabel);
+                card.Children.Add(sexLabel);
+                card.Children.Add(descriptionLabel);
+
+                cardsPanel.Children.Add(card);
             }
         }
     }
 }
 
-// JSON CLASSES
 // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
 public class Avatar
 {
-    public int id { get; set; }
+    public object id { get; set; }
     public string type { get; set; }
     public string thumbUrl { get; set; }
     public string url { get; set; }
@@ -153,7 +207,7 @@ public class Individual
     public Avatar avatar { get; set; }
 }
 
-public class GeoLocation
+public class Location
 {
     public double lat { get; set; }
     public double lng { get; set; }
@@ -174,4 +228,3 @@ public class Root
     public List<Encounter> encounters { get; set; }
     public List<Photo> photos { get; set; }
 }
-
