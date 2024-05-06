@@ -3,19 +3,23 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="WhaleTrail.WhalesPage">
 
-    <ScrollView>
-        <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
-            <Label
-                Text="Whales"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1" />
+    <ContentPage.Resources>
+        <Style TargetType="VerticalStackLayout">
+            <Setter Property="BackgroundColor" Value="White"/>
+            <Setter Property="Padding" Value="20"/>
+        </Style>
+    </ContentPage.Resources>
 
-            <VerticalStackLayout  x:Name="cardsPanel">
+    <ScrollView>
+        <StackLayout 
+            Padding="40, 30" Spacing="20">
+            <Label Text="Whales Info" Style="{StaticResource pageTitle}" />
+            <Label Text="Learn more about the whales on your trip." />
+
+            <StackLayout  x:Name="cardsPanel" Spacing="40">
                 <!-- Dynamic content will be added here -->
-            </VerticalStackLayout>
-        </VerticalStackLayout>
+            </StackLayout>
+        </StackLayout>
     </ScrollView>
 
 </ContentPage>

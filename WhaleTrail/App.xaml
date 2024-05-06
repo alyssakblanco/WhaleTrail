@@ -8,6 +8,45 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+                <ResourceDictionary>
+
+                    <Style TargetType="Label" x:Key="pageTitle">
+                        <Setter Property="TextColor" Value="#193441"/>
+                        <Setter Property="FontAttributes" Value="Bold"/>
+                        <Setter Property="FontSize" Value="24"/>
+                    </Style>
+
+                    <Style TargetType="Label" x:Key="score">
+                        <Setter Property="TextColor" Value="#193441"/>
+                        <Setter Property="FontAttributes" Value="Bold"/>
+                        <Setter Property="FontSize" Value="48"/>
+                        <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                    </Style>
+
+                    <Style TargetType="Button">
+                        <Setter Property="BackgroundColor" Value="#193441"/>
+                        <Setter Property="TextColor" Value="White"/>
+                    </Style>
+
+                    <Style TargetType="Button" x:Key="sightingsBtn">
+                        <Setter Property="BackgroundColor" Value="#193441"/>
+                        <Setter Property="TextColor" Value="White"/>
+                        <Setter Property="FontAttributes" Value="Bold"/>
+                        <Setter Property="Opacity" Value="0.9"/>
+                    </Style>
+
+                    <Style TargetType="ScrollView">
+                        <Setter Property="Padding" Value="10"/>
+                        <Setter Property="BackgroundColor" Value="#CDDAD7"/>
+                    </Style>
+
+                    <Style TargetType="Shell">
+                        <Setter Property="BackgroundColor" Value="#CDDAD7"/>
+                        <Setter Property="ForegroundColor" Value="#CDDAD7"/>
+                        <Setter Property="TitleColor" Value="#445F6E"/>
+                    </Style>
+
+                </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

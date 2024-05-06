@@ -135,9 +135,9 @@ namespace WhaleTrail
 
             foreach (var whale in whales)
             {
-                var card = new VerticalStackLayout { Spacing = 10, Padding = 5 };
+                var card = new VerticalStackLayout { Spacing = 10 };
                 var whaleImage = new Image { Source = ImageSource.FromUri(new Uri(whale.Img)), HeightRequest = 100 };
-                var nameLabel = new Label { Text = whale.Name, FontSize = 18 };
+                var nameLabel = new Label { Text = whale.Name, FontSize = 18, FontAttributes = FontAttributes.Bold };
                 var speciesLabel = new Label { Text = $"Species: {whale.Species}", FontSize = 14 };
                 var sexLabel = new Label { Text = $"Sex: {whale.Sex}", FontSize = 14 };
                 var descriptionLabel = new Label { Text = whale.Bio, FontSize = 14 };

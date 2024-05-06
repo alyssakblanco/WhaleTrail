@@ -5,12 +5,10 @@
              Shell.NavBarIsVisible="False">
 
     <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
-        <Label
-                Text="Future"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1" />
+            Padding="60, 30"
+            Spacing="20">
+        <Label Text="Can't stop singing whale songs?" />
+        <Button Text="Book Your Next Tour"/>
     </VerticalStackLayout>
 
 </ContentPage>

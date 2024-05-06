@@ -37,8 +37,8 @@ namespace WhaleTrail.Pages.TabPages
             
             if (lastFetchTimestamp == DateTime.MinValue)
             {
-                // default to last 30 days if DateTime.MinValue is 0001-01-01
-                lastFetchTimestamp = DateTime.UtcNow.AddDays(-30);
+                // default to last 60 days if DateTime.MinValue is 0001-01-01
+                lastFetchTimestamp = DateTime.UtcNow.AddDays(-60);
                 Console.WriteLine($"SET lastFetchTimestamp {lastFetchTimestamp}");
             }
 
@@ -48,8 +48,8 @@ namespace WhaleTrail.Pages.TabPages
             if (count == 0)
             {
                 Console.WriteLine("NEW DB");
-                // default to last 30 days for new databases
-                LoadDataAsync(DateTime.UtcNow.AddDays(-30), phoneLat, phoneLng);
+                // default to last 60 days for new databases
+                LoadDataAsync(DateTime.UtcNow.AddDays(-60), phoneLat, phoneLng);
 
                 // update last fetch time
                 Preferences.Set("LastAPIFetch", DateTime.UtcNow);
@@ -134,7 +134,7 @@ namespace WhaleTrail.Pages.TabPages
             Console.WriteLine($"CM phoneLng {longitude}");
 
             Maui.Location gpsPos = new Maui.Location(latitude, longitude);
-            MapSpan mapSpan = new MapSpan(gpsPos, 0.8, 0.8);
+            MapSpan mapSpan = new MapSpan(gpsPos, 0.3, 0.6);
 
             map.MoveToRegion(mapSpan);
 
@@ -221,6 +221,12 @@ namespace WhaleTrail.Pages.TabPages
                     Label = sighting.Name, 
                     Type = PinType.Place,
                     Location = new Maui.Location(sighting.Lat, sighting.Long) 
+                };
+                pin.MarkerClicked += async (sender, e) =>
+                {
+                    e.HideInfoWindow = true;
+                    string pinName = ((Pin)sender).Label;
+                    await DisplayAlert("Whale: " + pinName, "Location: : Lat " + sighting.Lat + " Lng " + sighting.Long, "Close");
                 };
 
                 map.Pins.Add(pin);

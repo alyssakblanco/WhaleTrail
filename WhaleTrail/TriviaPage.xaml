@@ -4,57 +4,57 @@
              x:Class="WhaleTrail.TriviaPage">
 
     <ScrollView>
-        <VerticalStackLayout Spacing="25" Padding="30">
+        <VerticalStackLayout Padding="40, 30">
             <!-- Start -->
-            <VerticalStackLayout x:Name="StartLayout">
-                <Label FontSize="24" Text="Trivia"/>
+            <VerticalStackLayout x:Name="StartLayout" Spacing="20">
+                <Label Style="{StaticResource pageTitle}" Text="Trivia"/>
                 <Label FontSize="14" Text="How whale can you answer these questions?"/>
                 <Button Text="Start!"
                 Clicked="StartQuiz" />
             </VerticalStackLayout>
 
             <!-- Quiz -->
-            <VerticalStackLayout x:Name="QuizLayout" IsVisible="False">
-                <Label FontSize="20" Text="Good luck!"/>
+            <VerticalStackLayout x:Name="QuizLayout" IsVisible="False" Spacing="20">
+                <Label Style="{StaticResource pageTitle}" Text="Good luck!"/>
 
                 <VerticalStackLayout>
-                    <Label FontSize="14" Text="How whale can you answer these questions?"/>
-                    <RadioButton Content="Option 1" GroupName="q1"/>
-                    <RadioButton Content="Option 2" GroupName="q1"/>
-                    <RadioButton Content="Option 3" GroupName="q1"/>
-                    <RadioButton Content="Option 3" GroupName="q1" x:Name="answer0"/>
+                    <Label FontSize="14" Text="What is a group of whales called?"/>
+                    <RadioButton Content="Pack" GroupName="q1"/>
+                    <RadioButton Content="Swarm" GroupName="q1"/>
+                    <RadioButton Content="Pod" GroupName="q1" x:Name="answer0"/>
+                    <RadioButton Content="School" GroupName="q1"/>
                 </VerticalStackLayout>
 
                 <VerticalStackLayout>
-                    <Label FontSize="14" Text="How whale can you answer these questions?"/>
-                    <RadioButton Content="Option 1" GroupName="q2"/>
-                    <RadioButton Content="Option 2" GroupName="q2"/>
-                    <RadioButton Content="Option 3" GroupName="q2"/>
-                    <RadioButton Content="Option 3" GroupName="q2" x:Name="answer1"/>
+                    <Label FontSize="14" Text="What is the largest animal on Earth?"/>
+                    <RadioButton Content="Elephant" GroupName="q2"/>
+                    <RadioButton Content="Shark" GroupName="q2"/>
+                    <RadioButton Content="Squid" GroupName="q2"/>
+                    <RadioButton Content="Blue Whale" GroupName="q2" x:Name="answer1"/>
                 </VerticalStackLayout>
 
                 <VerticalStackLayout>
-                    <Label FontSize="14" Text="How whale can you answer these questions?"/>
-                    <RadioButton Content="Option 1" GroupName="q3"/>
-                    <RadioButton Content="Option 2" GroupName="q3"/>
-                    <RadioButton Content="Option 3" GroupName="q3"/>
-                    <RadioButton Content="Option 3" GroupName="q3" x:Name="answer2"/>
+                    <Label FontSize="14" Text="What species of whale haunts Captain Ahab in Herman Melville’s Moby Dick?"/>
+                    <RadioButton Content="Blue Whale" GroupName="q3"/>
+                    <RadioButton Content="Sperm Whale" GroupName="q3" x:Name="answer2"/>
+                    <RadioButton Content="Baleen Whale" GroupName="q3"/>
+                    <RadioButton Content="Gray Whale" GroupName="q3"/>
                 </VerticalStackLayout>
 
                 <VerticalStackLayout>
-                    <Label FontSize="14" Text="How whale can you answer these questions?"/>
-                    <RadioButton Content="Option 1" GroupName="q4"/>
-                    <RadioButton Content="Option 2" GroupName="q4"/>
-                    <RadioButton Content="Option 3" GroupName="q4"/>
-                    <RadioButton Content="Option 3" GroupName="q4" x:Name="answer3"/>
+                    <Label FontSize="14" Text="Approximately how many pounds does the average sperm whale's heart weigh?"/>
+                    <RadioButton Content="435" GroupName="q4"/>
+                    <RadioButton Content="115" GroupName="q4"/>
+                    <RadioButton Content="300" GroupName="q4"/>
+                    <RadioButton Content="277" GroupName="q4" x:Name="answer3"/>
                 </VerticalStackLayout>
 
                 <VerticalStackLayout>
-                    <Label FontSize="14" Text="How whale can you answer these questions?"/>
-                    <RadioButton Content="Option 1" GroupName="q5"/>
-                    <RadioButton Content="Option 2" GroupName="q5"/>
-                    <RadioButton Content="Option 3" GroupName="q5"/>
-                    <RadioButton Content="Option 3" GroupName="q5" x:Name="answer4"/>
+                    <Label FontSize="14" Text="Which of the following classifications of mammal do whales belong to?"/>
+                    <RadioButton Content="Cetacea" GroupName="q5"  x:Name="answer4"/>
+                    <RadioButton Content="Sirenia" GroupName="q5"/>
+                    <RadioButton Content="Artiodactyla" GroupName="q5"/>
+                    <RadioButton Content="Perissodactyla" GroupName="q5"/>
                 </VerticalStackLayout>
 
                 <Button Text="Finish"
@@ -62,8 +62,8 @@
             </VerticalStackLayout>
 
             <!-- End -->
-            <VerticalStackLayout x:Name="EndLayout" IsVisible="False">
-                <Label x:Name="score" FontSize="24" />
+            <VerticalStackLayout x:Name="EndLayout" IsVisible="False" Spacing="20">
+                <Label x:Name="score" Style="{StaticResource score}" />
                 <Label FontSize="20" Text="Sea, that wasnt so hard."/>
                 <Button Text="Start Over"
                 Clicked="Reset" />
